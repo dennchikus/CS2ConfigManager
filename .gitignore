@@ -1,0 +1,17 @@
+# Виртуальное окружение
+.venv/
+venv/
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Данные программы (конфиги, логи, бэкапы)
+storage/
+_avatars/
+
+# PyInstaller (сборка)
+build/
+dist/
+*.spec

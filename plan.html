@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>CS2 Config Manager — План</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #161a22;
+    --border: #232a36;
+    --text: #d8dde6;
+    --muted: #7d8797;
+    --accent: #5b9dff;
+    --green: #3ddc84;
+    --orange: #ffb454;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 20px;
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    line-height: 1.6;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 0 0 8px; }
+  h2 { font-size: 20px; margin: 40px 0 16px; color: var(--accent); }
+  .subtitle { color: var(--muted); margin-bottom: 32px; }
+  pre {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px;
+    overflow-x: auto; font-size: 13px; line-height: 1.5;
+  }
+  code { color: var(--orange); font-family: "Consolas", monospace; }
+  .step {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 18px 22px; margin-bottom: 14px;
+    transition: border-color 0.15s;
+  }
+  .step:hover { border-color: var(--accent); }
+  .step-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 8px;
+  }
+  .step-num {
+    background: var(--accent); color: #0a0d13;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .step-title { font-weight: 600; font-size: 16px; }
+  .step-body { color: var(--muted); font-size: 14px; margin-left: 40px; }
+  .step-body ul { margin: 6px 0; padding-left: 18px; }
+  .step-body li { margin: 3px 0; }
+  .why {
+    margin-top: 10px; padding: 8px 12px;
+    background: rgba(91,157,255,0.08); border-left: 3px solid var(--accent);
+    border-radius: 4px; font-size: 13px; color: var(--text);
+  }
+  .why::before { content: "💡 "; }
+  .warn {
+    background: rgba(255,180,84,0.08); border-left: 3px solid var(--orange);
+  }
+  .warn::before { content: "⚠️ "; }
+  .check { color: var(--green); font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>CS2 Config Manager</h1>
+<p class="subtitle">План разработки · портативная утилита для переноса конфигов CS2</p>
+
+<h2>📁 Структура проекта</h2>
+<pre>CS2ConfigManager/
+├── main.py                      <code># точка входа</code>
+├── pyproject.toml
+├── uv.lock
+├── .gitignore
+├── README.md
+├── PLAN.html
+├── app/
+│   ├── __init__.py
+│   ├── ui/
+│   │   ├── __init__.py
+│   │   ├── mainwindow.ui        <code># Qt Designer</code>
+│   │   └── main_window.py       <code># класс окна + сигналы</code>
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── paths.py             <code># пути: ресурсы vs данные</code>
+│   │   ├── steam.py             <code># поиск userdata</code>
+│   │   ├── configs.py           <code># копирование + бэкап</code>
+│   │   └── categories.py        <code># графика / клавиши</code>
+│   └── resources/
+│       └── icons/
+├── storage/                     <code># конфиги пользователя (рядом с .exe)</code>
+└── tests/</pre>
+
+<div class="why">
+  <b>Почему так:</b> <code>ui</code> и <code>core</code> разделены — интерфейс меняется часто, логика редко. <code>storage/</code> в корне, а не внутри <code>app/</code>, потому что при сборке в <code>.exe</code> именно эта папка остаётся снаружи, рядом с исполняемым файлом — это и делает программу портативной.
+</div>
+
+<h2>🗺️ Этапы</h2>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <div class="step-title">Подготовка среды</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Python 3.11+, uv установлен</li>
+      <li><code>uv init --bare</code>, <code>uv add PyQt6</code></li>
+      <li>Структура папок из блока выше</li>
+    </ul>
+    <div class="why">Без этого дальше не двинуться. Всё должно ставиться через <code>uv</code>, не через <code>pip</code> руками.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <div class="step-title">Qt Designer + первый запуск окна</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Нарисовать <code>mainwindow.ui</code> в Designer</li>
+      <li>Виджеты: 2× <code>QListWidget</code>, чекбоксы, 3 <code>QPushButton</code></li>
+      <li>Осмысленные <code>objectName</code>: <code>accountsList</code>, <code>configsList</code>, <code>checkboxGraphics</code>, <code>btnFind</code>...</li>
+      <li>В <code>main_window.py</code> — загрузка через <code>uic.loadUi()</code></li>
+      <li><code>main.py</code> запускает <code>QApplication</code> + <code>MainWindow</code></li>
+    </ul>
+    <div class="why">Грузить <code>.ui</code> в рантайме, а не конвертировать в <code>.py</code> — гибче, можно менять интерфейс мышкой без пересборки.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <div class="step-title">paths.py — единая точка путей</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li><code>resource_path()</code> — для <code>.ui</code>, иконок (внутри .exe)</li>
+      <li><code>data_path()</code> — для <code>storage/</code> (рядом с .exe)</li>
+      <li>Развилка: <code>getattr(sys, 'frozen', False)</code> — определяет, запущено ли как <code>.exe</code></li>
+    </ul>
+    <div class="why">Это скелет портативности. Если сделать поздно — придётся переписывать все пути в проекте.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <div class="step-title">steam.py — поиск userdata</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Найти папку Steam (обычно <code>C:\Program Files (x86)\Steam</code>)</li>
+      <li>Внутри — <code>userdata\&lt;SteamID&gt;\730\local\cfg\</code></li>
+      <li>Вернуть список: <code>SteamID</code> + путь + (опционально) имя аккаунта</li>
+      <li>Обработать случай: Steam на другом диске / портативный</li>
+    </ul>
+    <div class="why">В CS2 настройки лежат именно в <code>userdata</code>, а не в <code>steamapps</code>. И ключевые файлы — <code>config.cfg</code> и <code>cs2_video.txt</code>.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <div class="step-title">categories.py — какие файлы = графика</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Словарь: <code>{"graphics": ["cs2_video.txt", ...], "keys": ["config.cfg", ...]}</code></li>
+      <li>Категория = список имён файлов</li>
+      <li>UI при «применить» собирает выбранные категории в плоский список</li>
+    </ul>
+    <div class="why">Данные в одном месте — легко добавить новую категорию, не трогая логику копирования.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">6</div>
+    <div class="step-title">configs.py — копирование + бэкап</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li><code>save_to_storage(account_path, files)</code> — из аккаунта в <code>storage/</code></li>
+      <li><code>apply_to_account(account_path, files)</code> — из <code>storage/</code> в аккаунт</li>
+      <li>Перед apply — бэкап текущих файлов в <code>storage/_backup/&lt;timestamp&gt;/</code></li>
+    </ul>
+    <div class="why warn">Без бэкапа ты однажды затрёшь чужой конфиг и будешь виноват. Бэкап — не опция, а обязательная часть.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">7</div>
+    <div class="step-title">Связываем UI и логику</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li><code>btnFind.clicked</code> → <code>steam.find_accounts()</code> → заполнить <code>accountsList</code></li>
+      <li>Выбор аккаунта → показать конфиги в <code>configsList</code></li>
+      <li>Чекбоксы → при apply фильтруют, какие файлы копировать</li>
+      <li>Кнопки «Сохранить» / «Применить» → вызов из <code>configs.py</code></li>
+      <li>Обратная связь: <code>QMessageBox</code> при ошибках и успехе</li>
+    </ul>
+    <div class="why">Сигналы подключай в <code>main_window.py</code>, не в <code>main.py</code>. <code>main.py</code> — только запуск.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">8</div>
+    <div class="step-title">Тест «туда-обратно»</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Сохранить конфиг из аккаунта А в storage</li>
+      <li>Применить на аккаунт Б</li>
+      <li>Проверить в игре / сравнить файлы вручную</li>
+      <li>Убедиться, что бэкап создался</li>
+    </ul>
+    <div class="why">Не собирай .exe, пока это не работает стабильно на 2+ аккаунтах. Иначе будешь ловить баги вслепую.</div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">9</div>
+    <div class="step-title">(Опционально) украшательства</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li>Иконка приложения</li>
+      <li>Отображение имени аккаунта вместо SteamID</li>
+      <li>«Открыть папку storage» кнопкой</li>
+      <li>Запоминание последнего выбранного аккаунта</li>
+    </ul>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">10</div>
+    <div class="step-title">Сборка в .exe для флешки</div>
+  </div>
+  <div class="step-body">
+    <ul>
+      <li><code>uv add --dev pyinstaller</code></li>
+      <li>Флаг <code>--add-data</code> для <code>mainwindow.ui</code> и иконок</li>
+      <li>Флаг <code>--onefile</code> для одного файла (или <code>--onedir</code> — быстрее старт)</li>
+      <li>Проверить: <code>storage/</code> создаётся рядом с .exe, не внутри</li>
+    </ul>
+    <div class="why warn">После сборки <code>sys.argv[0]</code> в <code>paths.py</code> не работает — надо <code>sys.executable</code>. Мы это заложили в шаг 3, так что переписывать не придётся.</div>
+  </div>
+</div>
+
+<h2>🎯 С чего начать прямо сейчас</h2>
+<div class="step">
+  <div class="step-body" style="margin-left:0">
+    <ul>
+      <li><span class="check">1.</span> Проверить <code>uv run python -c "import PyQt6; print('ok')"</code></li>
+      <li><span class="check">2.</span> Создать структуру папок и пустые <code>__init__.py</code></li>
+      <li><span class="check">3.</span> Открыть Qt Designer, нарисовать <code>mainwindow.ui</code>, сохранить в <code>app/ui/</code></li>
+      <li><span class="check">4.</span> Написать <code>main.py</code> (5–10 строк: приложение + окно) и запустить</li>
+    </ul>
+    <div class="why">Цель первого дня — увидеть пустое окно из Designer. Всё остальное приложится.</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

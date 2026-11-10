@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect><x>0</x><y>0</y><width>900</width><height>650</height></rect>
+  </property>
+  <property name="minimumSize">
+   <size><width>760</width><height>560</height></size>
+  </property>
+  <property name="windowTitle">
+   <string>CS2 Config Manager</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow, QWidget#centralwidget {
+    background-color: #121212;
+}
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+}
+QLabel#subtitleLabel {
+    font-size: 12px;
+    color: #a1a1aa;
+}
+QGroupBox {
+    font-weight: 600;
+    color: #d4d4d8;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding-top: 10px;
+    background-color: #18181b;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 6px;
+    background-color: #121212;
+    color: #a1a1aa;
+}
+QTabWidget::pane {
+    border: 1px solid #27272a;
+    background-color: #18181b;
+    border-radius: 4px;
+}
+QTabBar::tab {
+    background-color: #27272a;
+    color: #a1a1aa;
+    padding: 8px 16px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    margin-right: 2px;
+}
+QTabBar::tab:selected {
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+QListWidget {
+    border: none;
+    background: transparent;
+    padding: 4px;
+    outline: 0;
+    font-size: 13px;
+}
+QListWidget::item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #e4e4e7;
+}
+QListWidget::item:hover {
+    background-color: #27272a;
+}
+QListWidget::item:selected {
+    background-color: #1e3a8a;
+    color: #ffffff;
+}
+QPushButton {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-weight: 600;
+    font-size: 13px;
+}
+QPushButton:hover { background-color: #2563eb; }
+QPushButton:pressed { background-color: #1d4ed8; }
+QPushButton#btnFindAccounts {
+    background-color: #18181b;
+    color: #60a5fa;
+    border: 1px solid #3b82f6;
+}
+QPushButton#btnFindAccounts:hover {
+    background-color: #27272a;
+}
+QPushButton#btnSave {
+    background-color: #10b981;
+}
+QPushButton#btnSave:hover {
+    background-color: #059669;
+}
+QPushButton#btnApply {
+    background-color: #3b82f6;
+}
+QCheckBox {
+    padding: 6px 10px;
+    font-size: 13px;
+    spacing: 6px;
+    color: #e4e4e7;
+}
+QCheckBox::indicator {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #52525b;
+    background: #18181b;
+}
+QCheckBox::indicator:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+QStatusBar {
+    background-color: #18181b;
+    color: #a1a1aa;
+    border-top: 1px solid #27272a;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="mainLayout">
+    <property name="spacing"><number>12</number></property>
+    <property name="leftMargin"><number>20</number></property>
+    <property name="topMargin"><number>18</number></property>
+    <property name="rightMargin"><number>20</number></property>
+    <property name="bottomMargin"><number>18</number></property>
+    <item>
+     <layout class="QHBoxLayout" name="headerLayout">
+      <property name="spacing"><number>12</number></property>
+      <item>
+       <layout class="QVBoxLayout" name="titleLayout">
+        <property name="spacing"><number>2</number></property>
+        <item>
+         <widget class="QLabel" name="titleLabel">
+          <property name="text"><string>CS2 Config Manager</string></property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="subtitleLabel">
+          <property name="text"><string>Портативное хранилище конфигов Counter-Strike 2</string></property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnFindAccounts">
+        <property name="text"><string>🔍 Найти аккаунты</string></property>
+        <property name="minimumSize"><size><width>160</width><height>40</height></size></property>
+        <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="listsLayout">
+      <property name="spacing"><number>12</number></property>
+      <item>
+       <widget class="QGroupBox" name="groupAccounts">
+        <property name="title"><string>Аккаунты Steam</string></property>
+        <layout class="QVBoxLayout" name="accountsLayout">
+         <property name="leftMargin"><number>8</number></property>
+         <property name="topMargin"><number>8</number></property>
+         <property name="rightMargin"><number>8</number></property>
+         <property name="bottomMargin"><number>8</number></property>
+         <item>
+          <widget class="QListWidget" name="accountsList">
+           <property name="iconSize"><size><width>32</width><height>32</height></size></property>
+           <property name="spacing"><number>2</number></property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupConfigs">
+        <property name="title"><string>Хранилище</string></property>
+        <layout class="QVBoxLayout" name="configsLayout">
+         <property name="leftMargin"><number>8</number></property>
+         <property name="topMargin"><number>8</number></property>
+         <property name="rightMargin"><number>8</number></property>
+         <property name="bottomMargin"><number>8</number></property>
+         <item>
+          <widget class="QTabWidget" name="tabsStorage">
+           <property name="currentIndex"><number>0</number></property>
+           <widget class="QWidget" name="tabProfiles">
+            <attribute name="title"><string>Профили</string></attribute>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QListWidget" name="configsList">
+               <property name="contextMenuPolicy"><enum>Qt::ContextMenuPolicy::CustomContextMenu</enum></property>
+               <property name="spacing"><number>2</number></property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tabBackups">
+            <attribute name="title"><string>Бэкапы</string></attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
+              <widget class="QListWidget" name="backupsList">
+               <property name="spacing"><number>2</number></property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnRollback">
+               <property name="text"><string>⏪ Откатить выбранный бэкап</string></property>
+               <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupCategories">
+      <property name="title"><string>Что копировать</string></property>
+      <layout class="QHBoxLayout" name="categoriesLayout">
+       <property name="leftMargin"><number>12</number></property>
+       <property name="topMargin"><number>4</number></property>
+       <property name="rightMargin"><number>12</number></property>
+       <property name="bottomMargin"><number>10</number></property>
+       <property name="spacing"><number>8</number></property>
+       <item>
+        <widget class="QCheckBox" name="chkGraphics">
+         <property name="text"><string>Графика</string></property>
+         <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chkKeys">
+         <property name="text"><string>Игровой процесс (прицел, сенса, бинды)</string></property>
+         <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chkAutoexec">
+         <property name="text"><string>Автоэкзек</string></property>
+         <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="categoriesSpacer">
+         <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+         <property name="sizeHint" stdset="0">
+          <size><width>40</width><height>20</height></size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="footerLayout">
+      <property name="spacing"><number>12</number></property>
+      <item>
+       <spacer name="footerSpacer">
+        <property name="orientation"><enum>Qt::Orientation::Horizontal</enum></property>
+        <property name="sizeHint" stdset="0">
+         <size><width>40</width><height>20</height></size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnSave">
+        <property name="text"><string>💾 Сохранить в хранилище</string></property>
+        <property name="minimumSize"><size><width>200</width><height>42</height></size></property>
+        <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnApply">
+        <property name="text"><string>📥 Применить к аккаунту</string></property>
+        <property name="minimumSize"><size><width>200</width><height>42</height></size></property>
+        <property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
